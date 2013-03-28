@@ -43,10 +43,15 @@ public:
 public:
     Horse()
     {
+        m_style = Linear;
+        m_x = m_y = m_oldX = m_oldY = 0;
     }
 
     void Init(uint32_t id, uint32_t raceSegments, StateGrid *state)
     {
+        m_id = id;
+        m_x = id;
+        m_y = 0;
         m_raceSegments = raceSegments;
         m_state = state;
     };

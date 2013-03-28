@@ -10,7 +10,7 @@ const uint32_t final_rank[] = {
 
 int main(int argc, char *argv[])
 {
-    const uint32_t horse_count = 6;
+    const uint32_t horse_count = 5;
     const uint32_t segment = 5;
 
     StateGrid state(horse_count, final_rank);

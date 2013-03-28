@@ -213,7 +213,7 @@ void StateGrid::Step()
     for(int i=0; i<m_gridSize; i++)
     {
         // move winners first to avoid some collision
-        uint32_t id = m_finalRank[i];
+        uint32_t id = m_finalRank[i]-1;
 
         m_horses[id].Step(m_crtSegment);
         if(m_horses[id].m_y - m_horses[id].m_oldY > 0 &&
@@ -232,4 +232,7 @@ void StateGrid::Step()
 
 void StateGrid::Dump()
 {
+    printf("[%d] ", m_crtSegment);
+    for(int i=0; i<m_gridSize; i++)
+        printf("%d, ", m_horses[
 }
