@@ -228,11 +228,12 @@ void StateGrid::Step()
     // try shift left
 
     m_crtSegment++;
+    Dump();
 }
 
 void StateGrid::Dump()
 {
     printf("[%d] ", m_crtSegment);
     for(int i=0; i<m_gridSize; i++)
-        printf("%d, ", m_horses[
+        printf("(%d,%d), ", m_horses[i].m_x, m_horses[i].m_y);
 }
