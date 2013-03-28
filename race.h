@@ -1,7 +1,12 @@
 #ifndef __RACE_H__
 #define __RACE_H__
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <stdint.h>
+#include <map>
+#include <vector>
+#include "math.h"
 
 #define MAX_STATE_GRID_SIZE 20
 #define MAX_RACE_SEGMENT 10
@@ -15,18 +20,15 @@ enum RaceStyle
     StyleCount,
 };
 
-int RaceRank[StyleCount][MAX_RACE_SEGMENT] = {
-    { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,},
-    { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,},
-    { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,},
-    { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,},
-};
+extern int RaceRank[StyleCount][MAX_RACE_SEGMENT];
 
 typedef std::pair<uint32_t, uint32_t> idPair;
 typedef std::vector<idPair> vecId2;
 typedef vecId2::iterator iterVecId2;
 typedef std::vector<int> vecId;
 typedef vecId::iterator iterVecId;
+
+class StateGrid;
 
 struct Horse
 {
@@ -43,7 +45,7 @@ public:
     {
     }
 
-    Init(id, uint32_t raceSegments, StateGrid *state)
+    void Init(uint32_t id, uint32_t raceSegments, StateGrid *state)
     {
         m_raceSegments = raceSegments;
         m_state = state;
@@ -61,21 +63,10 @@ public:
     {
         m_oldX = m_x;
         m_oldY = m_y;
-        m_y = m_expY;
+        m_y = GetRank(segment);
     };
 
-    int32_t Collide()
-    {
-        for(uint32_t i=0; i<state->GetGridSize(); i++)
-        {
-            if(i == m_id)
-                continue;
-            const Horse& tmpHorse = state->GetHorse(i);
-            if(OverLap(tmpHorse))
-                return i;
-        }
-        return -1;
-    }
+    int32_t Collide();
 
     bool Overlap(const Horse& horse)
     {
@@ -93,47 +84,12 @@ public:
 
     void Distace(const Horse& horse, uint32_t *dX, uint32_t *dY)
     {
-        dX = horse.m_x - m_x;
-        dY = horse.m_y - m_y;
+        *dX = horse.m_x - m_x;
+        *dY = horse.m_y - m_y;
     }
 
-    void SameLine(vecId output)
-    {
-        output.clear();
-
-        for(uint32_t i=0; i<m_state->GetGridSize(); i++)
-        {
-            if(i == m_id)
-                continue;
-            if(state->GetHorse(i).m_y == m_y)
-                output.push_back(i);
-        }
-    }
+    void SameLine(vecId output);
 };
-
-void SortVecId(vecId output, bool smallFirst = true)
-{
-    // buble sort
-    for(iterVecId iter1 = output.begin();
-        iter1 != output.end(); iter1++)
-    {
-        for(iterVecId iter2 = iter1+1;
-            iter2 != output.end(); iter2++)
-        {
-            const Horse& horse1 = m_state->GetHorse(*iter1);
-            const Horse& horse2 = m_state->GetHorse(*iter2);
-
-            if( (smallFirst && horse1.m_x > horse2.m_x) ||
-                (!smallFirst && horse1.m_x < horse2.m_x) )
-            {
-                uint32_t tmpId = *iter1;
-                *iter1 = *iter2;
-                *iter2 = tmpId;
-            }
-        }
-    }
-}
-
 
 class StateGrid
 {
@@ -144,7 +100,7 @@ private:
 
     uint32_t m_crtSegment;
     const uint32_t* m_finalRank;
-protect:
+protected:
     bool ShiftRight(uint32_t id);
     bool ShiftLeft(uint32_t id);
 
@@ -168,7 +124,5 @@ public:
         return m_horses[id];
     }
 };
-
-
 
 #endif /* __RACE_H__ */

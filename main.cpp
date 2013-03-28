@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "race.h"
 
 const uint32_t horse_count = 5;
